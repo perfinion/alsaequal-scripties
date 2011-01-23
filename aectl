@@ -1,0 +1,29 @@
+#! /bin/bash
+
+ce=ctl.equal
+
+case "$1" in
+    save)
+        if [ $# -ge 2 ] ; then exec >$2 ; fi
+        ctlnames=$( amixer -D $ce scontrols | sed -e "s:.*'\(.*\)'.*:\1:" -e "s: :_:g" )
+        for c in $ctlnames ; do
+            rc=$( echo "$c" | sed -e "s:_: :g" )
+            val=$( amixer -D $ce get "$rc" | grep -m1 '%' | sed -e "s:.*[^0-9]\([0-9][0-9]*\)%.*:\1:" )
+            echo "$c:$val"
+        done
+        ;;
+    load)
+        if [ $# -ge 2 ] ; then exec <$2 ; fi
+        while read line ; do
+            c=$( echo $line | cut -d: -f1 )
+            rc=$( echo "$c" | sed -e "s:_: :g" )
+            val=$( echo $line | cut -d: -f2 )
+            amixer -D $ce set "$rc" "${val}%" > /dev/null
+        done
+        ;;
+    *)
+        echo "usage: $0 (save|load)" >&2
+        exit 2
+        ;;
+esac
+
