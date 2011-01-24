@@ -1,0 +1,66 @@
+This minipackage collects a bunch of scripts I use to ease the use of
+alsaequal [1], in particular when used together with mpd [2].  At the
+moment, the scripts are all primitive and very dependent on my
+particular system, namely a Debian [3] based workstation without any
+"integrated desktop environment".  Of course I intend to make them less
+primitive and more portable :-) , but nonetheless I will resist any
+effort to make them dependent on said "integrated environments", _even
+indirectly_ through shared libraries and such.
+
+The main script here is eq, which is basically a wrapper around
+alsamixer run on the software equalizer provided by alsaequal.  It
+executes alsamixer repeatedly in a loop until alsamixer exits with
+status 0.  This is because the ael script (discussed below) sends
+alsamixer a signal after loading a saved set of equalizer values.  This
+is only needed because alsamixer seems to lack any ability to refresh
+its display when the control values change outside of its own purview.
+
+The other parts are aes and ael, which are just shell functions using
+the worker aectl script.  They are used as follows: after esablishing a
+working set of equalizer values for a particular occassion or a type of
+music, you run aes to save and label them with a descriptive name.  For
+instance, you're listening to a famous female vocalist [4] and decide to
+tweak the settings to promote her voice at the expense of the bass
+section, then you can run
+
+ aes femvox
+
+to save these settings for similar music in the future.  When that happy
+moment arrives you can run
+
+ ael femvox
+
+to restore these same settings.
+
+Because alsaequal maintains the equalizer values per-user, all of eq,
+aes and ael must be run as the same user for this to work.  In
+particular, if it is mpd driving the output through alsaequal, all of
+the scripts must be run as the same user mpd runs as.  On Debian, there
+is a separate user "mpd" for this, but of course this totally depends on
+the distribution.
+
+Future ideas:
+
+It should be almost trivial to write a simple GUI menu that provides all
+the saved saved settings to select from by clicking.  Possibly
+python-gtk plus maybe glade and it shouldn't be more than 20 lines of
+code.
+
+The more ambitious idea is to write an mpd client to track what is being
+played, based perhaps on mpdscribble [5], and load equalizer settings
+according to the music metadata.
+
+Ian Zimmerman <itz@buug.org>
+gpg public key: 1024D/C6FF61AD 
+fingerprint: 66DC D68F 5C1B 4D71 2EE5  BD03 8A00 786C C6FF 61AD
+Ham is for reading, not for eating.
+
+[1] http://www.thedigitalmachine.net/alsaequal.html
+
+[2] http://mpd.wikia.com/
+
+[3] http://www.debian.org
+
+[4] https://secure.wikimedia.org/wikipedia/en/wiki/Sandy_Denny
+
+[5] http://mpd.wikia.com/wiki/Client:Mpdscribble
