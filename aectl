@@ -6,7 +6,29 @@
 # modification, are permitted provided that the conditions spelled out in
 # the file LICENSE are met.
 
+set -e
+
 ce=ctl.equal
+eqd=~/.aectl
+pidfile=$eqd/.eq.pid
+
+intersect()
+{
+    for p in $* ; do echo $p ; done | sort | uniq -d
+}
+
+signal_mixer()
+{
+    local eq_pid
+    local eq_kids
+    local mixers
+    local m
+    eq_pid=$1
+    eq_kids=$( ps --no-header --ppid $eq_pid -o pid )
+    mixers=$( ps --no-header -C alsamixer -o pid )
+    m=$( intersect $eq_kids $mixers )
+    if [ -n $m ] ; then kill -USR1 $m ; fi
+}
 
 case "$1" in
     save)
@@ -26,6 +48,10 @@ case "$1" in
             val=$( echo $line | cut -d: -f2 )
             amixer -D $ce set "$rc" "${val}%" > /dev/null
         done
+        if [ -f $pidfile ] ; then
+            eq_pid=$( cat $pidfile )
+            signal_mixer $eq_pid
+        fi
         ;;
     *)
         echo "usage: $0 (save|load)" >&2
