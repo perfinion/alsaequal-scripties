@@ -15,4 +15,4 @@ LIBS = aectl.sh
 install :
 	./mkinstalldirs $(bindir) $(DESTDIR)$(libdir)
 	./install-sh $(SCRIPTS) $(DESTDIR)$(bindir)
-	./install-sh -m644 $(LIBS) $(DESTDIR)$(libdir)
+	./install-sh -m 644 $(LIBS) $(DESTDIR)$(libdir)
