@@ -10,4 +10,4 @@
 
 set -e
 xauth nlist | su -s /bin/sh -c 'xauth nmerge -' mpd
-exec pyael
+exec su -s /bin/sh -c pyael mpd
