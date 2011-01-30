@@ -1,0 +1,52 @@
+#! /usr/bin/env python
+
+from Tkinter import *
+import os
+import os.path
+import sys
+
+
+class Application(Frame):
+
+    def get_eq_styles(self):
+        l = [f for f in os.listdir(self.directory) if not f.startswith('.')]
+        l.sort()
+        return l
+
+    def act_on_selection(self, event):
+        items = event.widget.curselection()
+        if not items:
+            return
+        os.system('aectl load %s/%s'
+                  % (self.directory, event.widget.get(items[0])))
+
+    def quick_quit(self, _):
+        self.quit()
+
+    def createWidgets(self):
+        self.b = Button(self, text='Quit', command=self.quit)
+        self.b.pack({"side": "bottom"})
+
+        self.l = Listbox(self)
+        for style in self.get_eq_styles():
+            self.l.insert(0, style)
+        self.l.bind("<Key-Return>", self.act_on_selection)
+        self.l.bind("<Double-Button-1>", self.act_on_selection)
+        self.l.pack({"side": "top"})
+        self.l.focus()
+
+    def __init__(self, master=None, directory=None):
+        Frame.__init__(self, master)
+        self.directory = directory or os.path.expanduser('~/.aectl')
+        self.pack()
+        self.master.bind("<Alt-Key-q>", self.quick_quit)
+        self.createWidgets()
+
+root = Tk()
+directory = None
+if len(sys.argv) > 1:
+    directory = sys.argv[1]
+app = Application(master=root, directory=directory)
+app.master.title('Equalizers')
+app.mainloop()
+root.destroy()
