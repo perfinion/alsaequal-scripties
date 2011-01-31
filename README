@@ -64,3 +64,7 @@ Ham is for reading, not for eating.
 [4] https://secure.wikimedia.org/wikipedia/en/wiki/Sandy_Denny
 
 [5] http://mpd.wikia.com/wiki/Client:Mpdscribble
+
+2011-01-30 pyael implements Future Idea #1.  I suspect it might turn
+into a full graphical equalizer at some point, which would make most of
+the duct tape in this package obsolete.
